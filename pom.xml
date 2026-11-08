@@ -38,9 +38,16 @@
     <properties>
         <trails.version>0.0.1</trails.version>
         <selenium-bom.version>4.44.0</selenium-bom.version>
+        <spotless-maven-plugin.version>3.10.4</spotless-maven-plugin.version>
+        <spotless-maven-plugin.eclipse.version>4.41</spotless-maven-plugin.eclipse.version>
     </properties>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>io.github.yaforster</groupId>
+                <artifactId>trails-mcp</artifactId>
+                <version>${trails.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-bom</artifactId>
@@ -55,22 +62,17 @@
             </dependency>
             <dependency>
                 <groupId>io.github.yaforster</groupId>
-                <artifactId>trails-adapter-mysql</artifactId>
+                <artifactId>trails-db-mysql</artifactId>
                 <version>${trails.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.yaforster</groupId>
-                <artifactId>trails-adapter-selenium-grid</artifactId>
+                <artifactId>trails-run-grid</artifactId>
                 <version>${trails.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.yaforster</groupId>
-                <artifactId>trails-adapter-webdriver-support</artifactId>
-                <version>${trails.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.yaforster</groupId>
-                <artifactId>trails-adapter-local-webdriver</artifactId>
+                <artifactId>trails-run-local-webdriver</artifactId>
                 <version>${trails.version}</version>
             </dependency>
             <dependency>
@@ -80,11 +82,65 @@
             </dependency>
             <dependency>
                 <groupId>io.github.yaforster</groupId>
-                <artifactId>trails-adapter-oidc-jwt</artifactId>
+                <artifactId>trails-printer-pdf</artifactId>
+                <version>${trails.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.yaforster</groupId>
+                <artifactId>trails-auth-oidc-jwt</artifactId>
+                <version>${trails.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.yaforster</groupId>
+                <artifactId>trails-auth-none</artifactId>
                 <version>${trails.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless-maven-plugin.version}</version>
+
+                <configuration>
+                    <java>
+                        <includes>
+                            <include>src/main/java/**/*.java</include>
+                            <include>src/test/java/**/*.java</include>
+                        </includes>
+
+                        <eclipse>
+                            <version>${spotless-maven-plugin.eclipse.version}</version>
+                            <file>${maven.multiModuleProjectDirectory}/format/java-formatter.xml</file>
+                        </eclipse>
+
+                        <trimTrailingWhitespace/>
+                        <endWithNewline/>
+                    </java>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>format-java</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>apply</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>check-java-format</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
     <profiles>
         <profile>
